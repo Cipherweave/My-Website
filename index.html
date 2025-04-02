@@ -1,0 +1,869 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CyberSec Portfolio // [Ali Karimi]</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;700&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/FontLoader.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/geometries/TextGeometry.js"></script>
+
+    <style>
+        body { background-color: #0D0D0D; color: #E0E0E0; font-family: 'Inter', sans-serif; overflow-x: hidden; }
+        h1, h2, h3, h4, h5, h6, .font-mono { font-family: 'Fira Code', monospace; }
+        .neon-glow-blue { transition: all 0.3s ease; text-shadow: 0 0 5px rgba(0, 255, 255, 0.5), 0 0 10px rgba(0, 255, 255, 0.5), 0 0 15px rgba(0, 255, 255, 0.5); }
+        .neon-glow-green { transition: all 0.3s ease; text-shadow: 0 0 5px rgba(0, 255, 127, 0.5), 0 0 10px rgba(0, 255, 127, 0.5), 0 0 15px rgba(0, 255, 127, 0.5); }
+        .neon-glow-red { transition: all 0.3s ease; text-shadow: 0 0 5px rgba(255, 56, 96, 0.5), 0 0 10px rgba(255, 56, 96, 0.5), 0 0 15px rgba(255, 56, 96, 0.5); }
+        .neon-glow-orange { transition: all 0.3s ease; text-shadow: 0 0 5px rgba(255, 165, 0, 0.5), 0 0 10px rgba(255, 165, 0, 0.5), 0 0 15px rgba(255, 165, 0, 0.5); }
+        .btn-neon { border: 1px solid; transition: all 0.3s ease; position: relative; overflow: hidden; z-index: 1; }
+        .btn-neon::before { content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent); transition: left 0.5s ease; z-index: -1; }
+        .btn-neon:hover::before { left: 100%; }
+        .btn-neon-blue { border-color: #00FFFF; color: #00FFFF; }
+        .btn-neon-blue:hover { background-color: rgba(0, 255, 255, 0.1); box-shadow: 0 0 15px #00FFFF, inset 0 0 10px rgba(0, 255, 255, 0.3); }
+        .btn-neon-green { border-color: #00FF7F; color: #00FF7F; }
+        .btn-neon-green:hover { background-color: rgba(0, 255, 127, 0.1); box-shadow: 0 0 15px #00FF7F, inset 0 0 10px rgba(0, 255, 127, 0.3); }
+        .glass-panel { background-color: rgba(20, 20, 25, 0.6); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border: 1px solid rgba(0, 255, 255, 0.1); border-radius: 0.75rem; box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37); }
+        .blinking-cursor::after { content: '_'; animation: blink 1s step-end infinite; color: #00FF7F; margin-left: 2px; font-weight: bold; }
+        @keyframes blink { from, to { opacity: 1; } 50% { opacity: 0; } }
+        #terminal-output { height: 350px; overflow-y: auto; white-space: pre-wrap; word-break: break-all; scrollbar-width: thin; scrollbar-color: #00FFFF #1a1a1a; }
+        #terminal-output::-webkit-scrollbar { width: 8px; }
+        #terminal-output::-webkit-scrollbar-track { background: #1a1a1a; border-radius: 4px; }
+        #terminal-output::-webkit-scrollbar-thumb { background-color: #00FFFF; border-radius: 4px; border: 2px solid #1a1a1a; }
+        #terminal-input-line { display: flex; align-items: center; border-top: 1px solid rgba(0, 255, 255, 0.1); padding-top: 0.5rem; margin-top: 0.5rem; }
+        #terminal-prompt { color: #00FF7F; margin-right: 8px; }
+        #terminal-input { background: transparent; border: none; outline: none; color: #E0E0E0; font-family: 'Fira Code', monospace; flex-grow: 1; }
+        .monitor-bezel { background: linear-gradient(145deg, #1f1f24, #141418); border: 4px solid #333; border-radius: 1rem; padding: 0.75rem; box-shadow: inset 0 0 10px rgba(0,0,0,0.5), 0 5px 15px rgba(0,0,0,0.3); position: relative; display: flex; flex-direction: column; height: 100%; }
+        .monitor-bezel .glass-panel { flex-grow: 1; border-radius: 0.5rem; box-shadow: inset 0 2px 5px rgba(0, 255, 255, 0.1); display: flex; flex-direction: column; }
+        .glitch-text { position: relative; display: inline-block; }
+        .glitch-text::before, .glitch-text::after { content: attr(data-text); position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: #0D0D0D; overflow: hidden; clip: rect(0, 900px, 0, 0); animation-duration: 3s; animation-timing-function: linear; animation-iteration-count: infinite; animation-direction: alternate-reverse; }
+        .glitch-text::before { left: 2px; text-shadow: -1px 0 #FF3860; animation-name: glitch-anim-1; }
+        .glitch-text::after { left: -2px; text-shadow: -1px 0 #00FFFF; animation-name: glitch-anim-2; animation-duration: 4s; }
+        @keyframes glitch-anim-1 { 0% { clip: rect(42px, 9999px, 44px, 0); transform: skew(0.3deg); } 10% { clip: rect(17px, 9999px, 95px, 0); } 20% { clip: rect(80px, 9999px, 5px, 0); transform: skew(0.1deg); } 30% { clip: rect(30px, 9999px, 115px, 0); } 40% { clip: rect(55px, 9999px, 70px, 0); transform: skew(-0.2deg); } 50% { clip: rect(10px, 9999px, 100px, 0); } 60% { clip: rect(85px, 9999px, 40px, 0); transform: skew(0.4deg); } 70% { clip: rect(25px, 9999px, 75px, 0); } 80% { clip: rect(110px, 9999px, 60px, 0); transform: skew(-0.1deg); } 90% { clip: rect(5px, 9999px, 90px, 0); } 100% { clip: rect(70px, 9999px, 35px, 0); transform: skew(0); } }
+        @keyframes glitch-anim-2 { 0% { clip: rect(65px, 9999px, 119px, 0); transform: skew(-0.2deg); } 10% { clip: rect(5px, 9999px, 80px, 0); } 20% { clip: rect(90px, 9999px, 30px, 0); transform: skew(0.3deg); } 30% { clip: rect(20px, 9999px, 105px, 0); } 40% { clip: rect(75px, 9999px, 50px, 0); transform: skew(-0.4deg); } 50% { clip: rect(40px, 9999px, 125px, 0); } 60% { clip: rect(100px, 9999px, 15px, 0); transform: skew(0.1deg); } 70% { clip: rect(45px, 9999px, 95px, 0); } 80% { clip: rect(130px, 9999px, 55px, 0); transform: skew(-0.3deg); } 90% { clip: rect(10px, 9999px, 70px, 0); } 100% { clip: rect(80px, 9999px, 25px, 0); transform: skew(0); } }
+        .info-card { transition: transform 0.3s ease, box-shadow 0.3s ease; border: 1px solid rgba(0, 255, 127, 0.1); }
+        .info-card:hover { transform: translateY(-5px) scale(1.02); box-shadow: 0 10px 20px rgba(0, 0, 0, 0.4), 0 0 15px rgba(0, 255, 127, 0.5); border-color: rgba(0, 255, 127, 0.4); }
+        #easter-egg-content { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(13, 13, 13, 0.98); z-index: 1000; color: #FF3860; text-align: center; font-size: 2rem; font-family: 'Fira Code', monospace; cursor: pointer; display: flex; flex-direction: column; justify-content: center; align-items: center; }
+        #bg-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; }
+        #playground { min-height: 450px; }
+        #playground .glass-panel { display: flex; flex-direction: column; height: 100%; }
+        #server-canvas-container { flex-grow: 1; position: relative; border-radius: 0.5rem; overflow: hidden; min-height: 380px; background: rgba(0,0,0,0.1); }
+        #server-canvas { display: block; width: 100%; height: 100%; cursor: grab; }
+        #server-canvas:active { cursor: grabbing; }
+        #terminal-section { min-height: 450px; display: flex; flex-direction: column; }
+        #terminal-monitor-wrapper { flex-grow: 1; display: flex; }
+        #terminal-section .monitor-bezel .glass-panel { flex-grow: 1; display: flex; flex-direction: column; padding: 0.75rem 1rem; }
+        #terminal-output { flex-grow: 1; }
+
+        /* Styles for the connecting wire and pulse */
+        #wire-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 5; overflow: visible; visibility: hidden; /* Hidden by default */ }
+        #connecting-wire-path { stroke: #303035; stroke-width: 5; stroke-linecap: round; fill: none; filter: drop-shadow(0 2px 3px rgba(0,0,0,0.5)); transition: d 0.05s linear; /* Smooth path updates */ }
+        #connecting-wire-pulse {
+            stroke: #00FFFF; /* Neon blue color */
+            stroke-width: 3;
+            stroke-linecap: round;
+            fill: none;
+            filter: drop-shadow(0 0 6px #00FFFF) drop-shadow(0 0 12px #00FFFF); /* Neon glow */
+            stroke-dasharray: 30 1000; /* A 30-unit dash followed by a long gap */
+            stroke-dashoffset: 30; /* Start with the dash hidden (offset by its length) */
+            transition: d 0.05s linear, stroke-dashoffset 1.2s cubic-bezier(0.4, 0, 0.6, 1), opacity 0.2s linear; /* Animate path, offset, and opacity */
+            opacity: 0; /* Hidden by default */
+        }
+        #connecting-wire-pulse.pulsing {
+            opacity: 1; /* Make visible */
+            stroke-dashoffset: -970; /* Animate the offset to move the dash across the path length (1000 gap - 30 dash = 970) */
+        }
+        /* Media query for larger screens where the wire is typically shown */
+        @media (min-width: 768px) { }
+
+    </style>
+</head>
+<body class="antialiased relative">
+
+    <canvas id="bg-canvas"></canvas>
+
+    <svg id="wire-container">
+        <path id="connecting-wire-path" d="M 0 0 Q 0 0 0 0" />
+        <path id="connecting-wire-pulse" d="M 0 0 Q 0 0 0 0" />
+    </svg>
+
+    <div id="easter-egg-content" onclick="hideEasterEgg()">
+        <p class="neon-glow-red animate-pulse">[ACCESS GRANTED]</p>
+        <p class="text-lg mt-4">You found the backdoor...</p>
+        <p class="text-sm mt-8">(Click anywhere to close)</p>
+    </div>
+
+    <div class="container mx-auto px-4 py-8 md:py-16 relative z-10">
+
+        <header class="text-center mb-16 md:mb-24">
+             <h1 class="text-4xl md:text-6xl font-bold mb-4">
+                 <span class="glitch-text" data-text="[Ali Karimi]"> [Ali Karimi] </span>
+             </h1>
+             <p class="text-xl md:text-2xl text-[#00FFFF] neon-glow-blue blinking-cursor" id="typed-title">Cybersecurity Analyst</p>
+        </header>
+
+        <div class="flex flex-col md:flex-row gap-6 lg:gap-8 mb-16 md:mb-24 max-w-7xl mx-auto relative">
+            <section id="playground" class="w-full md:w-1/3">
+                 <div class="glass-panel p-4">
+                    <h3 class="text-lg font-bold text-center mb-2 neon-glow-red">System Core</h3>
+                    <div id="server-canvas-container">
+                        <canvas id="server-canvas"></canvas>
+                    </div>
+                    <p class="text-center text-xs text-gray-400 mt-2 font-mono">Interactive Module</p>
+                </div>
+            </section>
+
+            <section id="terminal-section" class="w-full md:w-2/3">
+                 <div id="terminal-monitor-wrapper" class="monitor-bezel">
+                     <div class="glass-panel p-4 md:p-6">
+                        <div id="terminal-output" class="font-mono text-sm mb-3"></div>
+                        <div id="terminal-input-line">
+                            <span id="terminal-prompt">guest@shell:~$ </span>
+                            <input type="text" id="terminal-input" autocomplete="off">
+                        </div>
+                    </div>
+                 </div>
+            </section>
+        </div>
+
+        <section id="experience" class="mb-16 md:mb-24">
+            <h2 class="text-3xl md:text-4xl font-bold text-center mb-8 md:mb-12 neon-glow-orange">./Career Trajectory</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+                <div class="glass-panel info-card p-5"> <h3 class="text-xl font-bold mb-1 text-[#FFA500]">Senior Security Analyst</h3> <p class="text-sm text-gray-400 mb-2">CyberCorp Inc. | 2022 - Present</p> <p class="text-sm text-gray-300 mb-3">Led threat hunting initiatives, developed custom detection rules, mentored junior analysts, and responded to major security incidents.</p> <span class="inline-block bg-[#FF3860]/10 text-[#FF3860] text-xs font-medium px-2.5 py-0.5 rounded mr-1 mb-1">Incident Response</span> <span class="inline-block bg-[#00FF7F]/10 text-[#00FF7F] text-xs font-medium px-2.5 py-0.5 rounded mr-1 mb-1">Threat Hunting</span> <span class="inline-block bg-[#FFA500]/10 text-[#FFA500] text-xs font-medium px-2.5 py-0.5 rounded mr-1 mb-1">SIEM</span> </div>
+                <div class="glass-panel info-card p-5"> <h3 class="text-xl font-bold mb-1 text-[#FFA500]">Penetration Tester</h3> <p class="text-sm text-gray-400 mb-2">Secure Solutions Ltd. | 2020 - 2022</p> <p class="text-sm text-gray-300 mb-3">Performed network, web application, and mobile penetration tests. Delivered comprehensive reports with actionable remediation advice.</p> <span class="inline-block bg-[#00FF7F]/10 text-[#00FF7F] text-xs font-medium px-2.5 py-0.5 rounded mr-1 mb-1">Pentesting</span> <span class="inline-block bg-[#00FFFF]/10 text-[#00FFFF] text-xs font-medium px-2.5 py-0.5 rounded mr-1 mb-1">Reporting</span> <span class="inline-block bg-[#FF3860]/10 text-[#FF3860] text-xs font-medium px-2.5 py-0.5 rounded mr-1 mb-1">Exploitation</span> </div>
+                <div class="glass-panel info-card p-5"> <h3 class="text-xl font-bold mb-1 text-[#FFA500]">Junior Security Engineer</h3> <p class="text-sm text-gray-400 mb-2">TechDefenders Co. | 2018 - 2020</p> <p class="text-sm text-gray-300 mb-3">Managed firewall rules, monitored security alerts, assisted with vulnerability scanning, and maintained security documentation.</p> <span class="inline-block bg-[#FFA500]/10 text-[#FFA500] text-xs font-medium px-2.5 py-0.5 rounded mr-1 mb-1">Firewalls</span> <span class="inline-block bg-[#00FFFF]/10 text-[#00FFFF] text-xs font-medium px-2.5 py-0.5 rounded mr-1 mb-1">Monitoring</span> <span class="inline-block bg-[#00FF7F]/10 text-[#00FF7F] text-xs font-medium px-2.5 py-0.5 rounded mr-1 mb-1">Vulnerability Management</span> </div>
+            </div>
+       </section>
+
+       <section id="portfolio" class="mb-16 md:mb-24">
+            <h2 class="text-3xl md:text-4xl font-bold text-center mb-8 md:mb-12 neon-glow-green">./Projects & Writeups</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+                 <div class="glass-panel info-card p-5"> <h3 class="text-xl font-bold mb-2 text-[#00FF7F]">Project Alpha</h3> <p class="text-sm text-gray-300 mb-3">Description of the project, maybe a CTF challenge, vulnerability research, or a tool developed.</p> <span class="inline-block bg-[#00FF7F]/10 text-[#00FF7F] text-xs font-medium px-2.5 py-0.5 rounded mr-1 mb-1">Pentesting</span> <span class="inline-block bg-[#00FFFF]/10 text-[#00FFFF] text-xs font-medium px-2.5 py-0.5 rounded mr-1 mb-1">Python</span> <a href="#" class="block mt-3 text-[#00FFFF] hover:underline text-sm font-semibold">View Details →</a> </div>
+                <div class="glass-panel info-card p-5"> <h3 class="text-xl font-bold mb-2 text-[#00FF7F]">Sigma Vulnerability Analysis</h3> <p class="text-sm text-gray-300 mb-3">Detailed analysis of a specific vulnerability or exploit chain. Techniques used, impact assessment.</p> <span class="inline-block bg-[#FF3860]/10 text-[#FF3860] text-xs font-medium px-2.5 py-0.5 rounded mr-1 mb-1">Reverse Engineering</span> <span class="inline-block bg-[#00FFFF]/10 text-[#00FFFF] text-xs font-medium px-2.5 py-0.5 rounded mr-1 mb-1">Ghidra</span> <a href="#" class="block mt-3 text-[#00FFFF] hover:underline text-sm font-semibold">Read Writeup →</a> </div>
+                <div class="glass-panel info-card p-5"> <h3 class="text-xl font-bold mb-2 text-[#00FF7F]">Secure Network Design</h3> <p class="text-sm text-gray-300 mb-3">Architecture and implementation of a secure network infrastructure for a hypothetical scenario.</p> <span class="inline-block bg-[#00FF7F]/10 text-[#00FF7F] text-xs font-medium px-2.5 py-0.5 rounded mr-1 mb-1">Network Security</span> <span class="inline-block bg-[#FFA500]/10 text-[#FFA500] text-xs font-medium px-2.5 py-0.5 rounded mr-1 mb-1">Firewalls</span> <a href="#" class="block mt-3 text-[#00FFFF] hover:underline text-sm font-semibold">Explore Design →</a> </div>
+            </div>
+       </section>
+
+       <section id="contact" class="text-center max-w-2xl mx-auto">
+             <h2 class="text-3xl md:text-4xl font-bold text-center mb-8 neon-glow-blue">Establish Connection</h2>
+             <p class="mb-8 text-gray-400">Initiating contact sequence. Use the secure channels below or type 'contact' in the terminal.</p>
+             <div class="flex justify-center space-x-6">
+                <a href="mailto:your.email@example.com" class="px-6 py-3 btn-neon btn-neon-blue rounded-lg text-lg">Email</a>
+                <a href="https://linkedin.com/in/yourprofile" target="_blank" rel="noopener noreferrer" class="px-6 py-3 btn-neon btn-neon-green rounded-lg text-lg">LinkedIn</a>
+                <a href="https://github.com/yourusername" target="_blank" rel="noopener noreferrer" class="px-6 py-3 btn-neon btn-neon-blue rounded-lg text-lg">GitHub</a>
+             </div>
+       </section>
+
+       <footer class="text-center mt-16 md:mt-24 pt-8 border-t border-gray-800">
+            <p class="text-sm text-gray-500 font-mono">::EOF:: // Session terminated. [Your Name] © <span id="current-year"></span></p>
+       </footer>
+
+    </div>
+
+    <script>
+        const YOUR_NAME = "[Your Name]";
+        const YOUR_TITLES = ["Cybersecurity Analyst", "Software Engineer"];
+        const TERMINAL_PROMPT = "guest@shell:~$ ";
+        const ROOT_PROMPT = "<span class='text-red-500'>root@portfolio:~# </span>";
+        const TYPE_SPEED = 100;
+        const DELETE_SPEED = 50;
+        const TITLE_DELAY = 2000;
+        const PULSE_INTERVAL = 5000; // Interval between wire pulse animations (in ms)
+
+        const TERMINAL_COMMANDS = {
+            'help': () => `Available commands:\n` +
+                       `  <span class="text-[#00FFFF]">whoami</span>     - Display bio information\n` +
+                       `  <span class="text-[#00FFFF]">skills</span>     - List technical skills\n` +
+                       `  <span class="text-[#00FFFF]">experience</span> - Navigate to work experience\n`+
+                       `  <span class="text-[#00FFFF]">projects</span>   - Navigate to projects\n` +
+                       `  <span class="text-[#00FFFF]">contact</span>    - Show contact information\n` +
+                       `  <span class="text-[#00FFFF]">clear</span>      - Clear the terminal screen\n` +
+                       `  <span class="text-[#00FFFF]">sudo</span>       - Request elevated privileges\n` +
+                       `  <span class="text-[#00FFFF]">exit</span>       - Terminate session`,
+            'whoami': () => `User: ${YOUR_NAME}\nTitle: Cybersecurity Professional\nStatus: Analyzing digital threats...\nBio: A passionate security expert dedicated to protecting digital assets. Experienced in offensive and defensive security measures. Always learning, always adapting.`,
+            'skills': () => `Core Competencies:\n  - Penetration Testing (Web, Network, Mobile)\n  - Vulnerability Assessment & Management\n  - Incident Response & Forensics\n  - Security Architecture & Design\n  - Scripting (Python, Bash)\n  - OS: Linux (Kali, Parrot), Windows\n  - Tools: Metasploit, Burp Suite, Nmap, Wireshark, Ghidra...`,
+            'experience': () => `Navigating to experience section...`,
+            'projects': () => `Navigating to projects section...`,
+            'contact': () => `Secure Channels:\n  Email: <a href="mailto:your.email@example.com" class="text-[#00FFFF] hover:underline">your.email@example.com</a>\n  LinkedIn: <a href="https://linkedin.com/in/yourprofile" target="_blank" rel="noopener noreferrer" class="text-[#00FFFF] hover:underline">linkedin.com/in/yourprofile</a>\n  GitHub: <a href="https://github.com/yourusername" target="_blank" rel="noopener noreferrer" class="text-[#00FFFF] hover:underline">github.com/yourusername</a>`,
+            'clear': () => { terminalOutput.innerHTML = ''; return ''; },
+            'sudo': () => `${ROOT_PROMPT}Permission denied. This incident will be reported.`,
+            'exit': () => `Terminating session... Connection closed.`,
+            'matrix': () => `Wake up, Neo... The Matrix has you...`,
+            'hack': () => `Attempting to hack the Gibson... Access Denied!`,
+        };
+
+        const typedTitleElement = document.getElementById('typed-title');
+        const terminalOutput = document.getElementById('terminal-output');
+        const terminalInput = document.getElementById('terminal-input');
+        const terminalPromptElement = document.getElementById('terminal-prompt');
+        const currentYearElement = document.getElementById('current-year');
+        const easterEggElement = document.getElementById('easter-egg-content');
+        const bgCanvas = document.getElementById('bg-canvas');
+        const serverCanvas = document.getElementById('server-canvas');
+        const serverCanvasContainer = document.getElementById('server-canvas-container');
+        const terminalMonitorWrapper = document.getElementById('terminal-monitor-wrapper');
+        const wireContainer = document.getElementById('wire-container');
+        const connectingWirePath = document.getElementById('connecting-wire-path');
+        const connectingWirePulse = document.getElementById('connecting-wire-pulse');
+
+        let titleIndex = 0; let charIndex = 0; let isDeleting = false;
+        let commandHistory = []; let historyIndex = -1;
+        const konamiCode = ['ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight', 'b', 'a'];
+        let konamiIndex = 0;
+        let pulseIntervalId = null;
+        let pulseListenerAttached = false; // Flag to ensure listener is attached only once
+
+        let bgScene, bgCamera, bgRenderer, bgParticles, bgWireframes = [];
+        let serverScene, serverCamera, serverRenderer, serverRack, serverAmbientLight, serverDirectionalLight;
+        let serverIsDragging = false; let serverPreviousMousePosition = { x: 0, y: 0 };
+        let serverBinaryParticles = []; let serverFontLoader = new THREE.FontLoader();
+        let serverLoadedFont = null; let serverRaycaster = new THREE.Raycaster();
+        let serverMouse = new THREE.Vector2();
+        let serverIsShaking = false;
+        let serverShakeIntensity = 0.05;
+        let serverShakeDuration = 0;
+        const RACK_WIDTH = 12;
+        const RACK_HEIGHT = 20;
+        const RACK_DEPTH = 10;
+        const SIDE_THICKNESS = 0.5;
+
+        let monitorGroup = null;
+        let monitorScreenMesh = null;
+        let safeTexture = null;
+        let hackedTexture = null;
+        let isMonitorShaking = false;
+        let monitorShakeDuration = 0;
+        const monitorShakeIntensity = 0.15;
+        let originalMonitorRelativePosition = new THREE.Vector3();
+        let isServerHackedState = false;
+        let serverFanBlades = null;
+        let serverBackPanel = null; // Reference to the back panel mesh for wire attachment
+
+        // --- Monitor Screen Text Scrolling ---
+        let monitorScrollOffset = 0;
+        let safeCtx = null; // Canvas context for the 'safe' texture
+        let gibberishLines = [];
+        const monitorLineHeight = 11; // Adjusted for 10px font
+        const monitorLinesVisible = 8; // Roughly how many lines fit
+        const monitorTextScrollSpeed = 0.5; // Pixels per frame
+        // --- End Monitor Screen Text Scrolling ---
+
+
+        function typeTitle() {
+            const currentTitle = YOUR_TITLES[titleIndex]; const displayedText = isDeleting ? currentTitle.substring(0, charIndex--) : currentTitle.substring(0, charIndex++);
+            typedTitleElement.textContent = displayedText; typedTitleElement.classList.add('blinking-cursor');
+            let typeSpeedActual = isDeleting ? DELETE_SPEED : TYPE_SPEED;
+            if (!isDeleting && charIndex === currentTitle.length) { typeSpeedActual = TITLE_DELAY; isDeleting = true; typedTitleElement.classList.remove('blinking-cursor'); setTimeout(() => typedTitleElement.classList.add('blinking-cursor'), TITLE_DELAY - 50); }
+            else if (isDeleting && charIndex === 0) { isDeleting = false; titleIndex = (titleIndex + 1) % YOUR_TITLES.length; typeSpeedActual = TYPE_SPEED * 2; }
+            setTimeout(typeTitle, typeSpeedActual);
+        }
+
+        function printToTerminal(text, isCommand = false, prompt = TERMINAL_PROMPT) {
+            const outputContainer = document.createElement('div');
+            if (isCommand) {
+                outputContainer.innerHTML = `${prompt}${text.replace(/</g, "<").replace(/>/g, ">")}`; // Escape HTML in command display
+            } else {
+                const lines = String(text).split('\n');
+                lines.forEach(line => {
+                    const lineElement = document.createElement('div');
+                    // Use innerHTML carefully for output - allow specific tags like <a>
+                    lineElement.innerHTML = line.trim() === '' ? ' ' : line;
+                    outputContainer.appendChild(lineElement);
+                });
+            }
+            if (terminalOutput) {
+                terminalOutput.appendChild(outputContainer);
+                terminalOutput.scrollTop = terminalOutput.scrollHeight;
+            }
+        }
+
+        function executeCommand(command) {
+            const trimmedCommand = command.trim();
+            const currentPrompt = terminalPromptElement.innerHTML; // Get prompt with potential color span
+            printToTerminal(trimmedCommand, true, currentPrompt);
+
+            if (trimmedCommand) { commandHistory.push(trimmedCommand); historyIndex = commandHistory.length; }
+
+            const commandKey = trimmedCommand.toLowerCase().split(' ')[0];
+            const args = trimmedCommand.split(' ').slice(1);
+
+            if (commandKey === 'clear') {
+                TERMINAL_COMMANDS.clear();
+            } else if (TERMINAL_COMMANDS[commandKey]) {
+                try {
+                    const result = TERMINAL_COMMANDS[commandKey](args);
+                    if (result !== undefined && result !== null && result !== '') {
+                         // No extra prompt needed for output unless specific command requires it
+                         setTimeout(() => {
+                            printToTerminal(result); // Print the direct result
+                            if (commandKey === 'experience' || commandKey === 'projects') {
+                                const sectionId = commandKey === 'experience' ? 'experience' : 'portfolio';
+                                const sectionElement = document.getElementById(sectionId);
+                                if (sectionElement) { sectionElement.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+                            }
+                        }, 50);
+                    } else if (commandKey === 'exit') {
+                         if(terminalInput) {
+                            terminalInput.disabled = true;
+                            terminalInput.value = 'Connection closed.';
+                            terminalInput.style.cursor = 'not-allowed';
+                         }
+                         if(terminalPromptElement) terminalPromptElement.style.display = 'none';
+                    }
+                } catch (error) {
+                    console.error(`Error executing command "${commandKey}":`, error);
+                    printToTerminal(`Error executing command: ${commandKey}`);
+                }
+            } else if (trimmedCommand !== '') {
+                // Use the commandKey variable which is already lowercased
+                printToTerminal(`bash: command not found: ${commandKey}`);
+            }
+
+            if (commandKey !== 'exit' && terminalInput) { terminalInput.value = ''; }
+        }
+
+
+        function handleTerminalInput(event) {
+             if (terminalInput && terminalInput.disabled) return;
+             if (!terminalInput) return;
+
+            if (event.key === 'Enter') { event.preventDefault(); const command = terminalInput.value; executeCommand(command); }
+            else if (event.key === 'ArrowUp') { event.preventDefault(); if (commandHistory.length > 0) { historyIndex = Math.max(0, historyIndex - 1); terminalInput.value = commandHistory[historyIndex] || ''; setTimeout(() => terminalInput.setSelectionRange(terminalInput.value.length, terminalInput.value.length), 0); } }
+            else if (event.key === 'ArrowDown') { event.preventDefault(); if (historyIndex < commandHistory.length - 1) { historyIndex++; terminalInput.value = commandHistory[historyIndex] || ''; setTimeout(() => terminalInput.setSelectionRange(terminalInput.value.length, terminalInput.value.length), 0); } else { historyIndex = commandHistory.length; terminalInput.value = ''; } }
+            else if (event.key === 'Tab') { event.preventDefault(); const currentInput = terminalInput.value.toLowerCase(); const possibleCommands = Object.keys(TERMINAL_COMMANDS).filter(cmd => cmd.startsWith(currentInput)); if (possibleCommands.length === 1) { terminalInput.value = possibleCommands[0]; } else if (possibleCommands.length > 1) { printToTerminal(possibleCommands.join('  ')); } } // Display possibilities directly
+        }
+
+        function handleKonami(event) {
+             const requiredKey = konamiCode[konamiIndex]; if (event.key.toLowerCase() === requiredKey.toLowerCase()) { konamiIndex++; if (konamiIndex === konamiCode.length) { showEasterEgg(); konamiIndex = 0; } }
+             else { konamiIndex = 0; if (event.key.toLowerCase() === konamiCode[0].toLowerCase()) { konamiIndex = 1; } }
+        }
+
+        function showEasterEgg() { if(easterEggElement) easterEggElement.style.display = 'flex'; }
+        function hideEasterEgg() { if(easterEggElement) easterEggElement.style.display = 'none'; }
+
+        function initBackground() {
+            if (!bgCanvas) return;
+            bgScene = new THREE.Scene(); bgScene.fog = new THREE.FogExp2(0x0D0D0D, 0.03);
+            bgCamera = new THREE.PerspectiveCamera(90, window.innerWidth / window.innerHeight, 0.1, 1000); bgCamera.position.z = 50;
+            bgRenderer = new THREE.WebGLRenderer({ canvas: bgCanvas, alpha: true, antialias: true }); bgRenderer.setSize(window.innerWidth, window.innerHeight); bgRenderer.setPixelRatio(window.devicePixelRatio);
+            const particleCount = 5000; const geometry = new THREE.BufferGeometry(); const positions = new Float32Array(particleCount * 3); const colors = new Float32Array(particleCount * 3);
+            const colorNeonBlue = new THREE.Color(0x00ffff); const colorNeonGreen = new THREE.Color(0x00ff7f); const colorNeonRed = new THREE.Color(0xff3860); const baseColor = new THREE.Color(0x444444);
+            for (let i = 0; i < particleCount; i++) { const i3 = i * 3; positions[i3] = (Math.random() - 0.5) * 200; positions[i3 + 1] = (Math.random() - 0.5) * 200; positions[i3 + 2] = (Math.random() - 0.5) * 200; let particleColor; const rand = Math.random(); if (rand < 0.02) particleColor = colorNeonBlue; else if (rand < 0.04) particleColor = colorNeonGreen; else if (rand < 0.05) particleColor = colorNeonRed; else particleColor = baseColor; colors[i3] = particleColor.r; colors[i3 + 1] = particleColor.g; colors[i3 + 2] = particleColor.b; }
+            geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3)); geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+            const material = new THREE.PointsMaterial({ size: 0.25, vertexColors: true, transparent: true, opacity: 0.7, sizeAttenuation: true }); bgParticles = new THREE.Points(geometry, material); bgScene.add(bgParticles);
+            const shapeGeometry = new THREE.IcosahedronGeometry(10, 1); const wireframeMaterial = new THREE.MeshBasicMaterial({ color: 0x00ff7f, wireframe: true, transparent: true, opacity: 0.15 });
+            for (let i = 0; i < 5; i++) { const mesh = new THREE.Mesh(shapeGeometry, wireframeMaterial); mesh.position.set((Math.random() - 0.5) * 100, (Math.random() - 0.5) * 100, (Math.random() - 0.5) * 100 - 30); mesh.rotation.set(Math.random() * Math.PI, Math.random() * Math.PI, Math.random() * Math.PI); mesh.scale.setScalar(Math.random() * 0.5 + 0.5); bgScene.add(mesh); bgWireframes.push(mesh); }
+            window.addEventListener('resize', onWindowResizeBackground, false);
+        }
+        function onWindowResizeBackground() {
+            if (!bgCamera || !bgRenderer) return;
+            bgCamera.aspect = window.innerWidth / window.innerHeight;
+            bgCamera.updateProjectionMatrix();
+            bgRenderer.setSize(window.innerWidth, window.innerHeight);
+            updateConnectingWire(); // Update wire on resize
+        }
+        function animateBackground() {
+            requestAnimationFrame(animateBackground);
+            if (!bgRenderer || !bgScene || !bgCamera) return;
+            const time = Date.now() * 0.0001;
+            if (bgParticles) { bgParticles.rotation.y = time * 0.5; bgParticles.rotation.x = time * 0.2; }
+            bgWireframes.forEach(mesh => { mesh.rotation.x += 0.001; mesh.rotation.y += 0.002; });
+            bgRenderer.render(bgScene, bgCamera);
+        }
+
+        function loadServerFontAndInit() {
+             if (serverFontLoader) {
+                const fontPath = 'https://cdn.jsdelivr.net/npm/three@0.128.0/examples/fonts/helvetiker_regular.typeface.json';
+                serverFontLoader.load(fontPath, function (font) { serverLoadedFont = font; initServerPlayground(); animateServerPlayground(); }, undefined, function (error) { console.error('Server font loading failed:', error); if(serverCanvasContainer) serverCanvasContainer.innerHTML = "<p class='text-center text-red-500 p-4'>Failed to load 3D module.</p>"; });
+             } else {
+                 console.error("FontLoader not available.");
+                 if(serverCanvasContainer) serverCanvasContainer.innerHTML = "<p class='text-center text-red-500 p-4'>Failed to load 3D module (loader missing).</p>";
+             }
+        }
+
+        function generateGibberishLines(numLines = 20) {
+            const chars = 'abcdef0123456789<>[]{}():;,.^%$#@!';
+            gibberishLines = [];
+            for (let i = 0; i < numLines; i++) {
+                let line = '';
+                const lineLength = Math.floor(Math.random() * 15) + 5; // Shorter lines
+                if (Math.random() < 0.1) line += `0x${Math.random().toString(16).substring(2, 8)}: `;
+                for (let j = 0; j < lineLength; j++) {
+                    line += chars.charAt(Math.floor(Math.random() * chars.length));
+                }
+                gibberishLines.push(line);
+            }
+        }
+
+        function updateMonitorScreenText() {
+            if (!safeCtx || !safeTexture) return;
+
+            const canvas = safeCtx.canvas;
+            safeCtx.fillStyle = '#102018'; // Darker teal/green background
+            safeCtx.fillRect(0, 0, canvas.width, canvas.height);
+
+            safeCtx.fillStyle = '#00FF7F'; // Green text
+            safeCtx.font = 'bold 10px "Fira Code", monospace';
+            safeCtx.textBaseline = 'top';
+
+            const firstLineIndex = Math.floor(monitorScrollOffset / monitorLineHeight) % gibberishLines.length;
+            const yOffset = -(monitorScrollOffset % monitorLineHeight);
+
+            for (let i = 0; i < monitorLinesVisible + 2; i++) {
+                const lineIndex = (firstLineIndex + i + gibberishLines.length) % gibberishLines.length;
+                const yPos = yOffset + i * monitorLineHeight;
+                safeCtx.fillText(gibberishLines[lineIndex], 5, yPos);
+            }
+
+            safeTexture.needsUpdate = true;
+        }
+
+        function createMonitorTexture(type) {
+            const canvas = document.createElement('canvas');
+            const size = 128;
+            canvas.width = size;
+            canvas.height = size * 0.75;
+            const ctx = canvas.getContext('2d');
+
+            if (type === 'safe') {
+                safeCtx = ctx;
+                generateGibberishLines(); // Make sure lines are generated before first draw
+                updateMonitorScreenText(); // Initial draw
+            } else { // Hacked screen
+                ctx.fillStyle = '#200505';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                ctx.fillStyle = '#FF3860';
+                ctx.strokeStyle = '#FF3860';
+                ctx.lineWidth = 3;
+                const cx = canvas.width / 2; const cy = canvas.height / 2; const r = 25;
+                ctx.beginPath(); ctx.arc(cx, cy - r * 0.4, r, Math.PI * 1.1, Math.PI * 1.9); ctx.lineTo(cx + r * 0.6, cy + r * 0.7); ctx.quadraticCurveTo(cx, cy + r * 1.1, cx - r * 0.6, cy + r * 0.7); ctx.lineTo(cx - r * 0.8, cy - r * 0.3); ctx.closePath(); ctx.fill();
+                ctx.fillStyle = '#111'; ctx.beginPath(); ctx.arc(cx - r * 0.4, cy - r * 0.3, r * 0.25, 0, Math.PI * 2); ctx.fill(); ctx.beginPath(); ctx.arc(cx + r * 0.4, cy - r * 0.3, r * 0.25, 0, Math.PI * 2); ctx.fill();
+                ctx.beginPath(); ctx.moveTo(cx, cy); ctx.lineTo(cx - r * 0.15, cy + r * 0.2); ctx.lineTo(cx + r * 0.15, cy + r * 0.2); ctx.closePath(); ctx.fill();
+                ctx.strokeStyle = '#AA2040'; ctx.lineWidth = 2; const teethY = cy + r * 0.8; const teethW = r * 1.2;
+                ctx.beginPath(); ctx.moveTo(cx - teethW / 2, teethY); ctx.lineTo(cx + teethW / 2, teethY); for (let i = 1; i < 4; i++) { const tx = cx - teethW / 2 + (teethW / 4) * i; ctx.moveTo(tx, teethY - 4); ctx.lineTo(tx, teethY + 4); } ctx.stroke();
+                ctx.strokeStyle = `rgba(255, 56, 96, ${Math.random() * 0.5 + 0.2})`; ctx.lineWidth = 1 + Math.random(); for(let i=0; i< Math.random() * 5 + 3; i++) { const yGlitch = Math.random() * canvas.height; ctx.beginPath(); ctx.moveTo(0, yGlitch); ctx.lineTo(canvas.width, yGlitch + (Math.random() - 0.5) * 10); ctx.stroke(); }
+            }
+            const texture = new THREE.CanvasTexture(canvas);
+            texture.needsUpdate = true;
+            return texture;
+        }
+
+        function initServerPlayground() {
+            if (!serverCanvas || !serverCanvasContainer) { return; }
+            try {
+                serverScene = new THREE.Scene();
+                const aspect = serverCanvasContainer.clientWidth / serverCanvasContainer.clientHeight || 1;
+                serverCamera = new THREE.PerspectiveCamera(60, aspect, 0.1, 1000);
+                serverCamera.position.z = 25;
+                serverRenderer = new THREE.WebGLRenderer({ canvas: serverCanvas, alpha: true, antialias: true });
+                serverRenderer.setSize(serverCanvasContainer.clientWidth || 300, serverCanvasContainer.clientHeight || 400);
+                serverRenderer.setPixelRatio(window.devicePixelRatio);
+                serverAmbientLight = new THREE.AmbientLight(0x505050, 1);
+                serverScene.add(serverAmbientLight);
+                serverDirectionalLight = new THREE.DirectionalLight(0x00ffff, 0.9);
+                serverDirectionalLight.position.set(5, 10, 7);
+                serverScene.add(serverDirectionalLight);
+                const serverDirectionalLight2 = new THREE.DirectionalLight(0xff3860, 0.4);
+                serverDirectionalLight2.position.set(-5, -5, -3);
+                serverScene.add(serverDirectionalLight2);
+
+                serverRack = createRealisticServerRack();
+                if (serverRack) {
+                    // --- SET INITIAL ROTATION ---
+                    serverRack.rotation.y = -Math.PI / 5; // Rotate ~36 degrees left (counter-clockwise from top)
+                    // --- END INITIAL ROTATION ---
+                    serverScene.add(serverRack);
+                }
+
+                monitorGroup = new THREE.Group();
+                const monitorWidth = 6; const monitorHeight = monitorWidth * 0.75; const monitorDepth = 0.5;
+                const monitorBezelMat = new THREE.MeshStandardMaterial({ color: 0x1a1a1d, roughness: 0.7, metalness: 0.2 });
+                const monitorBezelGeo = new THREE.BoxGeometry(monitorWidth, monitorHeight, monitorDepth);
+                const monitorBezelMesh = new THREE.Mesh(monitorBezelGeo, monitorBezelMat);
+
+                safeTexture = createMonitorTexture('safe');
+                hackedTexture = createMonitorTexture('hacked');
+
+                const screenGeo = new THREE.PlaneGeometry(monitorWidth * 0.9, monitorHeight * 0.85);
+                const screenMat = new THREE.MeshBasicMaterial({ map: safeTexture });
+                monitorScreenMesh = new THREE.Mesh(screenGeo, screenMat);
+                monitorScreenMesh.position.z = monitorDepth / 2 + 0.01;
+
+                monitorGroup.add(monitorBezelMesh);
+                monitorGroup.add(monitorScreenMesh);
+
+                monitorGroup.position.set(RACK_WIDTH / 2 + monitorDepth / 2, RACK_HEIGHT * 0.25, 0);
+                monitorGroup.rotation.y = Math.PI / 2;
+                originalMonitorRelativePosition.copy(monitorGroup.position);
+
+                if (serverRack) {
+                    serverRack.add(monitorGroup);
+                } else {
+                    serverScene.add(monitorGroup); // Fallback if rack creation failed
+                }
+
+                serverCanvas.addEventListener('mousedown', onServerMouseDown, false);
+                serverCanvas.addEventListener('mousemove', onServerMouseMove, false);
+                serverCanvas.addEventListener('mouseup', onServerMouseUp, false);
+                serverCanvas.addEventListener('mouseleave', onServerMouseUp, false); // Treat leaving canvas as mouse up
+                serverCanvas.addEventListener('click', onServerCanvasClick, false);
+                window.addEventListener('resize', onWindowResizeServer, false);
+                onWindowResizeServer(); // Initial size calculation
+            } catch(error) {
+                console.error("Error initializing server playground:", error);
+                 if(serverCanvasContainer) serverCanvasContainer.innerHTML = "<p class='text-center text-red-500 p-4'>Error loading 3D module.</p>";
+            }
+        }
+
+        function createRealisticServerRack() {
+             const rackGroup = new THREE.Group();
+             const rackWidth = RACK_WIDTH; const rackHeight = RACK_HEIGHT; const rackDepth = RACK_DEPTH;
+             const frameMaterial = new THREE.MeshStandardMaterial({ color: 0x18181a, roughness: 0.4, metalness: 0.6 });
+             const serverUnitMaterial = new THREE.MeshStandardMaterial({ color: 0x3a3a3e, roughness: 0.6, metalness: 0.3 });
+             const ventMaterial = new THREE.MeshStandardMaterial({ color: 0x111113, roughness: 0.8, metalness: 0.1 });
+             const lightMaterialGreen = new THREE.MeshStandardMaterial({ color: 0x00ff7f, emissive: 0x00ff7f, emissiveIntensity: 1 });
+             const lightMaterialBlue = new THREE.MeshStandardMaterial({ color: 0x00aaff, emissive: 0x00aaff, emissiveIntensity: 1 });
+             const lightMaterialOff = new THREE.MeshStandardMaterial({ color: 0x222222, emissive: 0x000000 });
+             const sideThickness = SIDE_THICKNESS;
+             const sideGeo = new THREE.BoxGeometry(sideThickness, rackHeight, rackDepth);
+             const topBottomGeo = new THREE.BoxGeometry(rackWidth, 0.5, rackDepth);
+             const leftSide = new THREE.Mesh(sideGeo, frameMaterial); leftSide.position.set(-rackWidth / 2 + sideThickness / 2, 0, 0); rackGroup.add(leftSide);
+             const rightSide = new THREE.Mesh(sideGeo, frameMaterial); rightSide.position.set(rackWidth / 2 - sideThickness / 2, 0, 0); rackGroup.add(rightSide);
+             const topPanel = new THREE.Mesh(topBottomGeo, frameMaterial); topPanel.position.set(0, rackHeight / 2 - 0.25, 0); rackGroup.add(topPanel);
+             const bottomPanel = new THREE.Mesh(topBottomGeo, frameMaterial); bottomPanel.position.set(0, -rackHeight / 2 + 0.25, 0); rackGroup.add(bottomPanel);
+             const backGeo = new THREE.PlaneGeometry(rackWidth - sideThickness * 2, rackHeight - 0.5 * 2);
+             serverBackPanel = new THREE.Mesh(backGeo, ventMaterial); serverBackPanel.position.set(0, 0, -rackDepth / 2 + 0.01); serverBackPanel.name = 'serverBackPanel'; rackGroup.add(serverBackPanel);
+
+             // Cooling Fan (Larger, on the left)
+             const fanGroup = new THREE.Group(); const fanRadius = 2.2; const fanDepth = 0.3;
+             const fanHubMat = new THREE.MeshStandardMaterial({ color: 0x28282a, roughness: 0.5, metalness: 0.4 });
+             const fanBladeMat = new THREE.MeshStandardMaterial({ color: 0x333335, roughness: 0.6, metalness: 0.1 });
+             const hubGeo = new THREE.CylinderGeometry(fanRadius * 0.3, fanRadius * 0.3, fanDepth, 16);
+             const hubMesh = new THREE.Mesh(hubGeo, fanHubMat); hubMesh.rotation.x = Math.PI / 2; fanGroup.add(hubMesh);
+             serverFanBlades = new THREE.Group(); const numBlades = 7; const bladeWidth = fanRadius * 0.8; const bladeHeight = fanRadius * 0.08;
+             const bladeGeo = new THREE.BoxGeometry(bladeWidth, bladeHeight, fanDepth * 0.7);
+             for (let i = 0; i < numBlades; i++) { const angle = (i / numBlades) * Math.PI * 2; const bladeMesh = new THREE.Mesh(bladeGeo, fanBladeMat); bladeMesh.position.x = Math.cos(angle) * fanRadius * 0.6; bladeMesh.position.y = Math.sin(angle) * fanRadius * 0.6; bladeMesh.rotation.z = angle + Math.PI / 8; serverFanBlades.add(bladeMesh); }
+             fanGroup.add(serverFanBlades); fanGroup.position.set(-rackWidth * 0.25, -rackHeight * 0.2, -rackDepth / 2 + 0.2); rackGroup.add(fanGroup);
+
+             // Pot Plant
+             const potGroup = new THREE.Group(); const potHeight = 1.2; const potTopRadius = 0.8; const potBottomRadius = 0.6;
+             const potMat = new THREE.MeshStandardMaterial({ color: 0x8B4513, roughness: 0.8 }); const potGeo = new THREE.CylinderGeometry(potTopRadius, potBottomRadius, potHeight, 12);
+             const potMesh = new THREE.Mesh(potGeo, potMat); potGroup.add(potMesh); const soilMat = new THREE.MeshStandardMaterial({ color: 0x5C4033, roughness: 0.9 });
+             const soilGeo = new THREE.CylinderGeometry(potTopRadius * 0.9, potTopRadius * 0.9, 0.3, 12); const soilMesh = new THREE.Mesh(soilGeo, soilMat);
+             soilMesh.position.y = potHeight / 2 - 0.15; potGroup.add(soilMesh); const plantMat = new THREE.MeshStandardMaterial({ color: 0x228B22, roughness: 0.7 });
+             const stemGeo = new THREE.CylinderGeometry(0.1, 0.1, 1.5, 6); const stemMesh = new THREE.Mesh(stemGeo, plantMat); stemMesh.position.y = potHeight / 2 + 0.7; potGroup.add(stemMesh);
+             const leafGeo = new THREE.SphereGeometry(0.4, 8, 6); const leaf1 = new THREE.Mesh(leafGeo, plantMat); leaf1.position.set(0.3, potHeight / 2 + 1.3, 0); leaf1.scale.set(1, 0.7, 1); potGroup.add(leaf1);
+             const leaf2 = new THREE.Mesh(leafGeo, plantMat); leaf2.position.set(-0.2, potHeight / 2 + 1.5, 0.1); leaf2.scale.set(0.8, 0.6, 0.8); potGroup.add(leaf2);
+             potGroup.position.set(rackWidth * 0.3, rackHeight / 2 + 0.25 + potHeight / 2, rackDepth * 0.2); potGroup.rotation.y = Math.random() * Math.PI; rackGroup.add(potGroup);
+
+             // Server Units
+             const unitWidth = rackWidth * 0.85; const unitHeight = 1.2; const unitDepth = rackDepth * 0.8; const unitSpacing = 0.3; const numUnits = Math.floor((rackHeight * 0.9) / (unitHeight + unitSpacing));
+             for (let i = 0; i < numUnits; i++) { if (Math.random() < 0.15) continue; const unitY = (rackHeight / 2 - 0.5 - unitHeight / 2 - unitSpacing) - i * (unitHeight + unitSpacing); const unitGeometry = new THREE.BoxGeometry(unitWidth, unitHeight, unitDepth); const serverUnit = new THREE.Mesh(unitGeometry, serverUnitMaterial); serverUnit.position.set(0, unitY, 0); rackGroup.add(serverUnit); const lightGeometry = new THREE.BoxGeometry(0.2, 0.2, 0.1); const lightCount = Math.floor(Math.random() * 3) + 1; for (let l = 0; l < lightCount; l++) { let lightMat; const randLight = Math.random(); if (randLight < 0.6) lightMat = lightMaterialGreen; else if (randLight < 0.9) lightMat = lightMaterialBlue; else lightMat = lightMaterialOff; const light = new THREE.Mesh(lightGeometry, lightMat); light.position.set(-unitWidth / 2 + 0.5 + l * 0.4, unitY, unitDepth / 2 + 0.05); if (lightMat !== lightMaterialOff && Math.random() < 0.1) { light.userData.isFlickering = true; light.userData.baseIntensity = lightMat.emissiveIntensity; } rackGroup.add(light); } if (Math.random() < 0.5) { const ventGeo = new THREE.PlaneGeometry(unitWidth * 0.3, unitHeight * 0.6); const ventMesh = new THREE.Mesh(ventGeo, ventMaterial); ventMesh.position.set(unitWidth * 0.3, unitY, unitDepth / 2 + 0.01); rackGroup.add(ventMesh); } }
+             rackGroup.userData = { isServerRack: true };
+             return rackGroup;
+        }
+
+        function onWindowResizeServer() {
+             if (!serverCamera || !serverRenderer || !serverCanvasContainer || !serverCanvas) return;
+             const width = serverCanvasContainer.clientWidth;
+             const height = serverCanvasContainer.clientHeight;
+             if (height === 0 || width === 0) return;
+             serverCamera.aspect = width / height;
+             serverCamera.updateProjectionMatrix();
+             serverRenderer.setSize(width, height);
+             updateConnectingWire(); // Update wire on resize
+         }
+
+        function onServerMouseDown(event) { serverIsDragging = true; serverPreviousMousePosition.x = event.clientX; serverPreviousMousePosition.y = event.clientY; if(serverCanvas) serverCanvas.style.cursor = 'grabbing'; }
+
+        function onServerMouseMove(event) {
+            if (!serverIsDragging || !serverRack || !serverCanvas) return;
+            const deltaX = event.clientX - serverPreviousMousePosition.x;
+            const deltaY = event.clientY - serverPreviousMousePosition.y;
+
+            serverRack.rotation.y += deltaX * 0.005;
+            serverRack.rotation.x += deltaY * 0.005;
+            serverRack.rotation.x = Math.max(-Math.PI / 2.5, Math.min(Math.PI / 2.5, serverRack.rotation.x));
+
+            serverPreviousMousePosition.x = event.clientX; serverPreviousMousePosition.y = event.clientY;
+        }
+
+        function onServerMouseUp(event) { serverIsDragging = false; if(serverCanvas) serverCanvas.style.cursor = 'grab'; }
+
+        function onServerCanvasClick(event) {
+             setTimeout(() => { // Delay slightly to distinguish from drag end
+                 if (serverIsDragging || !serverCanvas || !serverRaycaster || !serverCamera || !serverRack) return;
+
+                const rect = serverCanvas.getBoundingClientRect();
+                serverMouse.x = ( (event.clientX - rect.left) / rect.width ) * 2 - 1;
+                serverMouse.y = - ( (event.clientY - rect.top) / rect.height ) * 2 + 1;
+
+                serverRaycaster.setFromCamera( serverMouse, serverCamera );
+                // Check for intersections with the serverRack and its children (recursive)
+                const intersects = serverRaycaster.intersectObject( serverRack, true );
+
+                if ( intersects.length > 0 ) {
+                     // Check if the first intersected object belongs to the serverRack or monitorGroup
+                     let intersectedValidTarget = false;
+                     let obj = intersects[0].object;
+                     while(obj && obj !== serverScene){
+                         if((obj.userData && obj.userData.isServerRack) || obj === monitorGroup || (obj.parent && obj.parent === monitorGroup)) {
+                             intersectedValidTarget = true;
+                             break;
+                         }
+                         obj = obj.parent;
+                     }
+
+                    if(intersectedValidTarget){
+                        triggerServerEffect();
+                    }
+                }
+            }, 50);
+        }
+
+        function triggerServerEffect() {
+            if (!serverIsShaking) {
+                serverIsShaking = true;
+                serverShakeDuration = 20; // Frames to shake
+            }
+
+            if (!isMonitorShaking && monitorScreenMesh && hackedTexture) {
+                 hackedTexture = createMonitorTexture('hacked'); // Regenerate for random glitches
+                 monitorScreenMesh.material.map = hackedTexture;
+                 monitorScreenMesh.material.needsUpdate = true;
+                 isMonitorShaking = true;
+                 monitorShakeDuration = 30; // Frames for hacked screen & shake
+                 isServerHackedState = true;
+            }
+
+            if (serverLoadedFont) {
+                 emitServerBinaryParticles(25);
+             }
+        }
+
+        function emitServerBinaryParticles(count) {
+             if (!serverLoadedFont || !serverRack || !serverScene) return;
+             const binaryMaterial = new THREE.MeshBasicMaterial({ color: Math.random() > 0.5 ? 0x00ff7f : 0x00ffff, transparent: true, opacity: 1.0 });
+             const particleSize = 0.7;
+             for (let i = 0; i < count; i++) {
+                const digit = Math.random() > 0.5 ? '1' : '0';
+                const textGeometry = new THREE.TextGeometry(digit, { font: serverLoadedFont, size: particleSize, height: 0.08 });
+                textGeometry.center(); const particle = new THREE.Mesh(textGeometry, binaryMaterial.clone());
+                const rackPosition = new THREE.Vector3(); serverRack.getWorldPosition(rackPosition);
+                particle.position.copy(rackPosition);
+                particle.position.x += (Math.random() - 0.5) * 8;
+                particle.position.y += (Math.random() - 0.5) * 15;
+                particle.position.z += (Math.random() - 0.5) * 8;
+                particle.userData.velocity = new THREE.Vector3((Math.random() - 0.5) * 0.2, Math.random() * 0.2 + 0.1, (Math.random() - 0.5) * 0.2);
+                particle.userData.life = 1.0; particle.userData.decay = Math.random() * 0.01 + 0.015;
+                serverScene.add(particle); serverBinaryParticles.push(particle);
+             }
+        }
+
+        function animateServerPlayground() {
+            requestAnimationFrame(animateServerPlayground);
+            if(!serverRenderer || !serverScene || !serverCamera) return;
+
+            const time = Date.now();
+            const deltaTime = 0.016; // Assume roughly 60fps
+
+            // Update Monitor Scrolling Text
+            if (!isServerHackedState && safeCtx && safeTexture) {
+                 monitorScrollOffset += monitorTextScrollSpeed;
+                 updateMonitorScreenText(); // Redraw canvas, update texture
+            }
+
+            // Server Rack Shake Effect
+            if (serverIsShaking && serverRack) {
+                if (serverShakeDuration > 0) {
+                    const shakeOffset = new THREE.Vector3( (Math.random() - 0.5) * serverShakeIntensity, (Math.random() - 0.5) * serverShakeIntensity, (Math.random() - 0.5) * serverShakeIntensity );
+                    serverRack.position.copy(shakeOffset);
+                    serverShakeDuration--;
+                } else {
+                    serverIsShaking = false;
+                    serverRack.position.set(0, 0, 0); // Reset position
+                }
+            }
+
+            // Monitor Shake & Screen Effect
+            if (isMonitorShaking && monitorGroup) {
+                 if (monitorShakeDuration > 0) {
+                     const shakeOffset = new THREE.Vector3( (Math.random() - 0.5) * monitorShakeIntensity, (Math.random() - 0.5) * monitorShakeIntensity, (Math.random() - 0.5) * monitorShakeIntensity );
+                     monitorGroup.position.copy(originalMonitorRelativePosition).add(shakeOffset);
+                     monitorShakeDuration--;
+                 } else {
+                    isMonitorShaking = false;
+                    monitorGroup.position.copy(originalMonitorRelativePosition);
+                    if (monitorScreenMesh && safeTexture && isServerHackedState) {
+                        monitorScreenMesh.material.map = safeTexture;
+                        updateMonitorScreenText(); // Redraw safe text content onto canvas
+                        monitorScreenMesh.material.needsUpdate = true; // Update texture from canvas
+                        isServerHackedState = false;
+                    }
+                 }
+            }
+
+            // Fan Rotation
+            if (serverFanBlades) {
+                serverFanBlades.rotation.z -= 5 * deltaTime; // Spin fan
+            }
+
+            // Light Flickering
+            if (serverRack) {
+                serverRack.traverse((object) => {
+                    if (object.isMesh && object.userData.isFlickering) {
+                        object.material.emissiveIntensity = object.userData.baseIntensity * (0.6 + Math.sin(time * 0.005 * (Math.random() * 5 + 2)) * 0.4);
+                    }
+                });
+            }
+
+            // Binary Particle Animation
+            const particlesToRemove = [];
+            serverBinaryParticles.forEach((particle, index) => {
+                particle.position.add(particle.userData.velocity); particle.userData.life -= particle.userData.decay;
+                if (particle.material) particle.material.opacity = Math.max(0, particle.userData.life);
+                particle.userData.velocity.y -= 0.003; // Gravity effect
+                particle.rotation.x += particle.userData.velocity.x * 0.1; particle.rotation.y += particle.userData.velocity.y * 0.1;
+                if (particle.userData.life <= 0) { particlesToRemove.push(index); serverScene.remove(particle); if(particle.geometry) particle.geometry.dispose(); if(particle.material) particle.material.dispose(); }
+            });
+            for (let i = particlesToRemove.length - 1; i >= 0; i--) { serverBinaryParticles.splice(particlesToRemove[i], 1); }
+
+            updateConnectingWire(); // Update wire position each frame
+
+            serverRenderer.render(serverScene, serverCamera);
+        }
+
+        function updateConnectingWire() {
+            if (!wireContainer || !connectingWirePath || !connectingWirePulse || !serverCanvasContainer || !terminalMonitorWrapper || !serverRack || !serverCamera || !serverRenderer) {
+                if (wireContainer) wireContainer.style.visibility = 'hidden';
+                return;
+            }
+
+            if (window.innerWidth < 768) { // Hide on small screens
+                wireContainer.style.visibility = 'hidden';
+                return;
+            }
+
+            const serverRect = serverCanvasContainer.getBoundingClientRect();
+            const terminalRect = terminalMonitorWrapper.getBoundingClientRect();
+
+            // Basic visibility check
+            if (serverRect.width === 0 || serverRect.height === 0 || terminalRect.width === 0 || terminalRect.height === 0 || serverRect.bottom < 0 || serverRect.top > window.innerHeight || terminalRect.bottom < 0 || terminalRect.top > window.innerHeight) {
+                wireContainer.style.visibility = 'hidden';
+                return;
+            }
+
+            let startX = 0, startY = 0;
+            let serverPointVisible = false;
+
+            try {
+                 serverRack.updateMatrixWorld(true); // Ensure world matrix is up-to-date
+                 // Define attachment point relative to serverRack origin (slightly forward from back)
+                 const localAttachmentPoint = new THREE.Vector3(0, RACK_HEIGHT * 0.1, -RACK_DEPTH / 2 + 1.5);
+                 const worldPoint = localAttachmentPoint.clone().applyMatrix4(serverRack.matrixWorld);
+                 const projectedPoint = worldPoint.project(serverCamera);
+
+                if (projectedPoint.z > -1 && projectedPoint.z < 1) { // Check if within frustum near/far planes
+                    const canvasWidth = serverRenderer.domElement.clientWidth;
+                    const canvasHeight = serverRenderer.domElement.clientHeight;
+                    const screenX_canvas = (projectedPoint.x * 0.5 + 0.5) * canvasWidth;
+                    const screenY_canvas = (-projectedPoint.y * 0.5 + 0.5) * canvasHeight;
+                    startX = serverRect.left + screenX_canvas;
+                    startY = serverRect.top + screenY_canvas;
+                    if (!isNaN(startX) && !isNaN(startY) && startX >= 0 && startY >= 0 ) { // Check validity
+                        serverPointVisible = true;
+                    }
+                }
+            } catch (error) { console.warn("Error calculating server wire origin:", error); serverPointVisible = false; }
+
+            if (!serverPointVisible) { wireContainer.style.visibility = 'hidden'; return; }
+
+            const endX = terminalRect.left + 5; // Left edge of terminal
+            const endY = terminalRect.top + terminalRect.height / 2; // Middle height of terminal
+
+             if (isNaN(endX) || isNaN(endY)) { wireContainer.style.visibility = 'hidden'; return; }
+
+            // Bezier curve control point calculation
+            const midX = startX + (endX - startX) * 0.5;
+            const verticalDiff = Math.abs(startY - endY);
+            const curveAmount = Math.max(50, verticalDiff * 0.3); // Adjust curve intensity
+            const controlOffsetY = (startY > endY) ? -curveAmount : curveAmount; // Push control point away vertically
+            const controlQX = midX;
+            const controlQY = startY + controlOffsetY; // Base vertical offset on startY
+
+            if (isNaN(controlQX) || isNaN(controlQY)) { wireContainer.style.visibility = 'hidden'; return; }
+
+            const d = `M ${startX.toFixed(1)} ${startY.toFixed(1)} Q ${controlQX.toFixed(1)} ${controlQY.toFixed(1)} ${endX.toFixed(1)} ${endY.toFixed(1)}`;
+
+            try {
+                connectingWirePath.setAttribute('d', d);
+                connectingWirePulse.setAttribute('d', d);
+                wireContainer.style.visibility = 'visible'; // Show the wire if calculations are valid
+            } catch (e) { 
+                console.error("Error setting wire path data:", e); wireContainer.style.visibility = 'hidden'; }
+        }
+
+        // Function to trigger the wire pulse animation
+        function triggerPulse() {
+            if (!connectingWirePulse || wireContainer.style.visibility === 'hidden') return; // Don't pulse if wire hidden
+            connectingWirePulse.classList.remove('pulsing');
+            // Force reflow/repaint is necessary for CSS transition restart
+            void connectingWirePulse.offsetWidth;
+            connectingWirePulse.classList.add('pulsing');
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            if (currentYearElement) currentYearElement.textContent = new Date().getFullYear();
+            setTimeout(typeTitle, 1000); // Start typing animation after delay
+            if (terminalInput) terminalInput.addEventListener('keydown', handleTerminalInput);
+            document.addEventListener('keydown', handleKonami);
+
+            // Initial terminal messages
+            if (terminalOutput) {
+                printToTerminal("Boot sequence complete. Welcome to the system.");
+                printToTerminal("Type 'help' for available commands.");
+            } else { console.error("Terminal output element not found on init."); }
+
+            // Initialize animations
+            try { initBackground(); animateBackground(); } catch (error) { console.error("Failed to initialize background animation:", error); if(bgCanvas) bgCanvas.style.display = 'none'; }
+            try { loadServerFontAndInit(); } catch (error) { console.error("Failed to initialize server playground:", error); if(serverCanvasContainer) serverCanvasContainer.innerHTML = "<p class='text-center text-red-500 p-4'>Failed to load 3D module.</p>"; }
+
+             // Focus terminal input on click within the terminal area (excluding links/input)
+             const terminalSection = document.getElementById('terminal-section');
+             if(terminalSection && terminalInput) {
+                 terminalSection.addEventListener('click', (e) => {
+                     if (e.target !== terminalInput && e.target.tagName !== 'A') {
+                         terminalInput.focus();
+                     }
+                 });
+             }
+
+            // Initial wire update and start pulsing
+            setTimeout(updateConnectingWire, 500); // Delay for layout
+
+             // Setup wire pulse interval and cleanup listener
+             if (connectingWirePulse) {
+                 if (pulseIntervalId) clearInterval(pulseIntervalId); // Clear existing interval if any
+                 pulseIntervalId = setInterval(triggerPulse, PULSE_INTERVAL); // Start pulsing
+
+                 // Add listener only once to handle animation end (optional cleanup)
+                 if (!pulseListenerAttached) {
+                     connectingWirePulse.addEventListener('transitionend', (event) => {
+                         // We only care about the dashoffset transition ending
+                         if (event.propertyName === 'stroke-dashoffset') {
+                              // Optional: Can remove 'pulsing' class here, but interval will re-add it
+                              // connectingWirePulse.classList.remove('pulsing');
+                         }
+                     });
+                     pulseListenerAttached = true;
+                 }
+             }
+        });
+
+    </script>
+
+</body>
+</html>
