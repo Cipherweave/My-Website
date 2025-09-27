@@ -394,6 +394,33 @@
           <div class="timeline-item">
              <div class="glass-panel info-card">
                <h3 class="text-xl md:text-2xl font-bold mb-1 text-[#FFA500]">
+                 Co-Founder & CEO / AI Software Engineer
+               </h3>
+               <p class="text-sm md:text-base text-gray-400 mb-2">
+                 Asymptote Labs Inc. | May 2025 - Sep 2025
+               </p>
+               <p class="text-sm md:text-base text-gray-300 mb-4">
+                 <ul class="description-list">
+                     <li>Founded company developing UMBRA, a non-lethal drone defense system, driving product vision, partnerships, and fundraising.</li>
+                     <li>Built AI-powered detection pipeline with YOLOv8/11 + OpenCV for real-time tracking and distance estimation.</li>
+                     <li>Developed Python algorithms for 360° autonomous servo targeting with motion sensor integration.</li>
+                     <li>Managed and trained on 10K+ drone images using Roboflow/Blender/Linux/Git to improve detection accuracy.</li>
+                 </ul>
+               </p>
+               <div class="tags-container flex flex-wrap gap-2">
+                 <!-- Add skills/tags here when available -->
+                 <span class="inline-block bg-[#00FFFF]/10 text-[#00FFFF] text-xs font-medium px-2.5 py-0.5 rounded">Python</span>
+                 <span class="inline-block bg-[#00FF7F]/10 text-[#00FF7F] text-xs font-medium px-2.5 py-0.5 rounded">C</span>
+                 <span class="inline-block bg-[#00FF7F]/10 text-[#00FF7F] text-xs font-medium px-2.5 py-0.5 rounded">Blender</span>
+                 <span class="inline-block bg-[#00FF7F]/10 text-[#00FF7F] text-xs font-medium px-2.5 py-0.5 rounded">YOLOv8/11</span>
+               </div>
+             </div>
+          </div>
+
+          <!-- Item 1 (Manual Add - Newest) -->
+          <div class="timeline-item">
+             <div class="glass-panel info-card">
+               <h3 class="text-xl md:text-2xl font-bold mb-1 text-[#FFA500]">
                  AI Software Engineer Intern
                </h3>
                <p class="text-sm md:text-base text-gray-400 mb-2">
@@ -487,7 +514,45 @@
         <!-- Changed to 2 columns on medium and large screens -->
         <div
           class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 max-w-7xl mx-auto" <!-- Adjusted max-width and columns for 6 projects -->
-        
+
+          <!-- Project Card 1 (Resume) -->
+          <div class="glass-panel info-card project-card">
+            <div>
+              <h3 class="text-xl font-bold mb-2 text-[#00FF7F]">
+                Offensive Security & Vulnerability Analysis
+              </h3>
+              <p class="text-sm text-gray-300 mb-3">
+                Found and demonstrated real vulnerabilities in Linux services and delivered reproducible PoC exploits. Designed and shipped fixes with clear impact analysis and repro/docs for verification.
+              </p>
+              <div class="mb-4 flex flex-wrap gap-1"> <!-- Added flex-wrap and gap -->
+                <span class="inline-block bg-[#00FF7F]/10 text-[#00FF7F] text-xs font-medium px-2.5 py-0.5 rounded">C</span>
+                <span class="inline-block bg-[#00FFFF]/10 text-[#00FFFF] text-xs font-medium px-2.5 py-0.5 rounded">GDB</span>
+                <span class="inline-block bg-[#FF3860]/10 text-[#FF3860] text-xs font-medium px-2.5 py-0.5 rounded">Pwntools</span>
+                <span class="inline-block bg-[#FFA500]/10 text-[#FFA500] text-xs font-medium px-2.5 py-0.5 rounded">Bash</span>
+              </div>
+            </div>
+            <!-- <a href="#" class="block mt-auto text-[#00FFFF] hover:underline text-sm font-semibold">View Details →</a> -->
+          </div>
+
+          <!-- Project Card 1 (Resume) -->
+          <div class="glass-panel info-card project-card">
+            <div>
+              <h3 class="text-xl font-bold mb-2 text-[#00FF7F]">
+                Kernel Syscall Hijacking
+              </h3>
+              <p class="text-sm text-gray-300 mb-3">
+                Built a kernel module that hijacks and logs system calls for specific processes while keeping normal behavior intact. Added permission checks and safe cleanup with spinlocks to ensure stability and prevent race conditions.
+              </p>
+              <div class="mb-4 flex flex-wrap gap-1"> <!-- Added flex-wrap and gap -->
+                <span class="inline-block bg-[#00FF7F]/10 text-[#00FF7F] text-xs font-medium px-2.5 py-0.5 rounded">C</span>
+                <span class="inline-block bg-[#00FFFF]/10 text-[#00FFFF] text-xs font-medium px-2.5 py-0.5 rounded">Linux kernel modules</span>
+                <span class="inline-block bg-[#FF3860]/10 text-[#FF3860] text-xs font-medium px-2.5 py-0.5 rounded">debugging tools</span>
+              </div>
+            </div>
+            <!-- <a href="#" class="block mt-auto text-[#00FFFF] hover:underline text-sm font-semibold">View Details →</a> -->
+          </div>
+
+          
           <!-- Project Card 1 (Resume) -->
           <div class="glass-panel info-card project-card">
             <div>
@@ -676,8 +741,8 @@
       const YOUR_TITLES = [             // *** UPDATED TITLES (Example) ***
         "Computer Science Student",
         "Cybersecurity Specialist",
-        "Software Engineer",
-        "AI Enthusiast",
+        "AI Software Engineer",
+        "Political Science"
       ];
       const TERMINAL_PROMPT = "guest@shell:~$ ";
       const ROOT_PROMPT = "<span class='text-red-500'>root@portfolio:~# </span>";
@@ -729,7 +794,9 @@
           `Secure Channels:\n` +
           `  Email:    <a href="mailto:ali.karimi@mail.utoronto.ca" class="text-[#00FFFF] hover:underline">ali.karimi@mail.utoronto.ca</a>\n` +
           `  LinkedIn: <a href="https://linkedin.com/in/alikarimi04" target="_blank" rel="noopener noreferrer" class="text-[#00FFFF] hover:underline">linkedin.com/in/alikarimi04</a>\n` +
-          `  GitHub:   <a href="https://github.com/Cipherweave" target="_blank" rel="noopener noreferrer" class="text-[#00FFFF] hover:underline">github.com/Cipherweave</a>`,
+          `  GitHub:   <a href="https://github.com/Cipherweave" target="_blank" rel="noopener noreferrer" class="text-[#00FFFF] hover:underline">github.com/Cipherweave</a>` +
+          `  TryHackMe:<a href="https://tryhackme.com/p/Cipherweave" target="_blank" rel="noopener noreferrer" class="text-[#00FFFF] hover:underline">tryhackme.com/p/Cipherweave</a>`,
+        clear: () => {
         clear: () => {
           if (terminalOutput) terminalOutput.innerHTML = "";
           return "";
@@ -1440,4 +1507,5 @@
     </script>
   </body>
 </html>
+
 
